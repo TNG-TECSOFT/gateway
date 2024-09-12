@@ -12,6 +12,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(envs.ms_port);
+  await app.listen(envs.port);
 }
 bootstrap();

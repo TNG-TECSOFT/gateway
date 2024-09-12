@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BillingController } from './billing.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { envs } from 'src/config/envs';
+import { envs } from '../config/envs';
 
 @Module({
   controllers: [BillingController],

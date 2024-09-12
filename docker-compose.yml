@@ -1,0 +1,33 @@
+version: '3.2'
+
+services:
+  sugu-gateway:
+    build: ./
+    container_name: sugu-gateway
+    ports:
+      - 3005:3005
+    env_file:
+      - ./.env.docker
+    volumes:
+      - node_modules:/gateway/api/node_modules
+    command: npm run start:dev
+    networks:
+      - uea-core-api_sugu_network
+    stdin_open: true
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /gateway/api/src
+          ignore:
+            - node_modules/
+
+volumes:
+  node_modules:
+    driver: "local"
+  
+networks:
+  uea-core-api_sugu_network:
+    external: true
+
+#test
