@@ -8,4 +8,4 @@ RUN npm install npm@9.6.7 -g
 
 RUN npm install --include=dev
 
-EXPOSE 3005 
+EXPOSE 3004 

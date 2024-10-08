@@ -1,60 +1,26 @@
-import { Controller, Get, Post, Body, Param, Inject } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { CreateBillingDto } from './dto/create-billing.dto';
-import { firstValueFrom } from 'rxjs';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Permissions } from 'src/auth/permissions.decorator';
+import { ROLE_ADMIN, ROLE_GENERAL } from 'src/auth/roles';
+import { BillingService } from './billing.service';
 
 @Controller('billing')
 export class BillingController {
-  constructor(
-    @Inject('BILLING_SERVICE')
-    private readonly client: ClientProxy,
-  ) {}
+  constructor(public service: BillingService) {}
 
-  @Get('/client/:clientId')
-  async getClientData(@Param('clientId') clientId: string) {
-    try {
-      const response = await firstValueFrom(
-        this.client.send<string, string>('getClientData', clientId),
-      );
-      return response;
-    } catch (error) {
-      console.error(
-        'Error communicating with the microservice:',
-        error.message,
-      );
-      throw new Error('Failed to retrieve client data');
-    }
-  }
+  @Permissions(ROLE_ADMIN, ROLE_GENERAL)
+  @UseGuards(AuthGuard)
+  @Get('/getOrders')
+  async getBillingOrders(@Query() query: any): Promise<any> {
+    const resultMap = await this.service.getBillingOrders(query);
 
-  @Get('/product/:sku')
-  async getProductData(@Param('sku') sku: string) {
-    try {
-      const response = await firstValueFrom(
-        this.client.send<string, string>('getProductData', sku),
-      );
-      return response;
-    } catch (error) {
-      console.error(
-        'Error communicating with the microservice:',
-        error.message,
-      );
-      throw new Error('Failed to retrieve product data');
-    }
-  }
-
-  @Post('/order')
-  async createOrder(@Body() createOrderDto: CreateBillingDto) {
-    try {
-      const response = await firstValueFrom(
-        this.client.send('createOrder', createOrderDto),
-      );
-      return response;
-    } catch (error) {
-      console.error(
-        'Error communicating with the microservice:',
-        error.message,
-      );
-      throw new Error('Failed to create order');
-    }
+    return {
+      data: resultMap.get('orders'),
+      count: resultMap.get('count'),
+      total: resultMap.get('total'),
+      page: resultMap.get('page'),
+      pageCount: resultMap.get('pageCount'),
+      totalAmount: resultMap.get('totalAmount'),
+    };
   }
 }

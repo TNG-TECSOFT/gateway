@@ -1,11 +1,11 @@
 version: '3.2'
 
 services:
-  sugu-gateway:
+  sugu-api-gateway:
     build: ./
-    container_name: sugu-gateway
+    container_name: sugu-api-gateway
     ports:
-      - 3005:3005
+      - 3004:3004
     env_file:
       - ./.env.docker
     volumes:

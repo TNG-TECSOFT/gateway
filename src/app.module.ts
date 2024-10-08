@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { BillingModule } from './billing/billing.module';
+import { TangoModule } from './tango/tango.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    BillingModule
+    TangoModule
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
