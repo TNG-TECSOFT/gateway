@@ -4,7 +4,6 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomerData, ProductData, OrderData } from './dto/tango-response.dto';
 import { CustomerQueryDto } from './dto/customer-query.dto';
-import { AuthService } from '../common/auth/auth.service';
 import { ProductQueryDto } from './dto/product-query.dto';
 import { OrderQueryDto } from './dto/order-query.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -14,7 +13,6 @@ export class TangoService {
   constructor(
     @Inject(envs.tango_ms_name)
     private readonly client: ClientProxy,
-    private readonly authService: AuthService,
   ) {}
 
   async checkHealth() {
