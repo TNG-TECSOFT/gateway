@@ -1,8 +1,4 @@
-import { Controller, Get, UseGuards, UseInterceptors, Body } from '@nestjs/common';
-import { AuthGuard } from './common/guards/auth.guard';
-import { ROLE_ADMIN, ROLE_GENERAL } from './common/constants/roles';
-import { Permissions } from './common/permissions/permissions';
-import { UserDataInterceptor } from './common/interceptors/userData.interceptor';
+import { Controller, Get } from '@nestjs/common';
 const packageJson = require('../package.json');
 
 @Controller()
