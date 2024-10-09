@@ -1,26 +1,31 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Permissions } from 'src/auth/permissions.decorator';
-import { ROLE_ADMIN, ROLE_GENERAL } from 'src/auth/roles';
+import { Controller, Get, Query, UseGuards, Headers } from '@nestjs/common';
+import { AuthGuard } from '../common/guards/auth.guard';
+import { Permissions } from '../common/permissions/permissions';
+import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
 import { BillingService } from './billing.service';
+import { BillableOrdersRequestDto } from './dto/billable-orders-request.dto';
+import { AuthService } from '../common/auth/auth.service';
 
 @Controller('billing')
 export class BillingController {
-  constructor(public service: BillingService) {}
+  constructor(
+    private readonly service: BillingService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Permissions(ROLE_ADMIN, ROLE_GENERAL)
   @UseGuards(AuthGuard)
-  @Get('/getOrders')
-  async getBillingOrders(@Query() query: any): Promise<any> {
-    const resultMap = await this.service.getBillingOrders(query);
-
-    return {
-      data: resultMap.get('orders'),
-      count: resultMap.get('count'),
-      total: resultMap.get('total'),
-      page: resultMap.get('page'),
-      pageCount: resultMap.get('pageCount'),
-      totalAmount: resultMap.get('totalAmount'),
-    };
+  @Get('/getBillableOrders')
+  async getBillableOrders(
+    @Headers('authorization') authorization: string,
+    @Query() params: string ) {
+    try {
+      const request = new BillableOrdersRequestDto();      
+      request.token = this.authService.getToken(authorization);
+      request.params = JSON.stringify(params);
+      return await this.service.getBillableOrders(request);
+    } catch (error) {
+      throw new Error('Failed to retrieve billable orders');
+    }
   }
 }
