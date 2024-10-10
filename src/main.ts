@@ -4,7 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { envs } from './config/envs';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    logger: ['error', 'log', 'warn'],
+  });
+  
+  app.enableCors();
   
   app.useGlobalPipes(
     new ValidationPipe({
@@ -12,6 +17,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(envs.port);
+  const server = await app.listen(envs.port || 3000);
+  server.setTimeout(600000);
 }
 bootstrap();
