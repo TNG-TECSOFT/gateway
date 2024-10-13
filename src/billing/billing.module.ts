@@ -2,12 +2,17 @@ import { Module } from '@nestjs/common';
 import { BillingController } from './billing.controller';
 import { BillingService } from './billing.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { envs } from '../config/envs';
-import { AuthService } from '../common/auth/auth.service';
+import { AuthInterceptor } from '../common/interceptors/auth.interceptor';
 
 @Module({
   controllers: [BillingController],
-  providers: [BillingService, AuthService],
+  providers: [BillingService, 
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuthInterceptor,
+    }],
   imports: [
     ClientsModule.register([
       {
