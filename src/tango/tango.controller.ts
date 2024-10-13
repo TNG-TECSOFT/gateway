@@ -6,14 +6,12 @@ import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
 import { CustomerQueryDto } from './dto/customer-query.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
 import { OrderQueryDto } from './dto/order-query.dto';
-import { AuthService } from '../common/auth/auth.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
 @Controller('tango')
 export class TangoController {
   constructor(
     private readonly service: TangoService,
-    private readonly authService: AuthService,
   ) {}
 
   @Get('/checkHealth')
@@ -36,8 +34,7 @@ export class TangoController {
     @Headers('authorization') authorization: string,
     @Query() query: CustomerQueryDto) {
     try {
-      query.token = this.authService.getToken(authorization);
-      return await this.service.getCustomerData(query);
+      return await this.service.getCustomerData(query, authorization);
     } catch (error) {
       throw new Error('Failed to retrieve customer data');
     }
@@ -50,8 +47,7 @@ export class TangoController {
     @Headers('authorization') authorization: string,
     @Query() query: ProductQueryDto) {
     try {
-      query.token = this.authService.getToken(authorization);
-      return await this.service.getProductData(query);
+      return await this.service.getProductData(query, authorization);
     } catch (error) {
       throw new Error('Failed to retrieve product data');
     }
@@ -64,8 +60,7 @@ export class TangoController {
     @Headers('authorization') authorization: string,
     @Query() query: OrderQueryDto) {
     try {
-      query.token = this.authService.getToken(authorization);
-      return await this.service.getOrderData(query);
+      return await this.service.getOrderData(query, authorization);
     } catch (error) {
       throw new Error('Failed to retrieve order data');
     }
@@ -78,8 +73,7 @@ export class TangoController {
     @Headers('authorization') authorization: string,
     @Body() orderData: CreateOrderDto) {
     try {
-      orderData.token = this.authService.getToken(authorization);
-      return await this.service.createOrder(orderData);
+      return await this.service.createOrder(orderData, authorization);
     } catch (error) {
       throw new Error('Failed to create order');
     }
