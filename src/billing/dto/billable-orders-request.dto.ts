@@ -1,6 +1,7 @@
 class BillableOrdersRequestDto {
-  token?: string;
+  token: string;
   params: string;
+  authorization_core: string;
 }
 
 export { BillableOrdersRequestDto };

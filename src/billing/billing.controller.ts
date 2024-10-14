@@ -16,9 +16,10 @@ export class BillingController {
   @Get('/getBillableOrders')
   async getBillableOrders(
     @Headers('authorization') authorization: string,
+    @Headers('authorization_core') authorization_core: string,
     @Query() params: string ) {
     try {
-      return await this.service.getBillableOrders(authorization, params);
+      return await this.service.getBillableOrders(authorization, params, authorization_core);
     } catch (error) {
       throw new Error('Failed to retrieve billable orders');
     }
