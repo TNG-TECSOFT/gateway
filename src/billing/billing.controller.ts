@@ -16,10 +16,10 @@ export class BillingController {
   @Get('/getBillableOrders')
   async getBillableOrders(
     @Headers('authorization') authorization: string,
-    @Headers('authorization_core') authorization_core: string,
+    @Headers('token') token: string,
     @Query() params: string ) {
     try {
-      return await this.service.getBillableOrders(authorization, params, authorization_core);
+      return await this.service.getBillableOrders(token, params, authorization);
     } catch (error) {
       throw new Error('Failed to retrieve billable orders');
     }
@@ -30,10 +30,10 @@ export class BillingController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('/addOrderToBilling')
   async addOrdersToBilling(
-    @Headers('authorization') authorization: string,
+    @Headers('token') token: string,
     @Body() body: AddOrderToBillingDto ) {
     try {
-      return await this.service.addOrdersToBilling(authorization, body);
+      return await this.service.addOrdersToBilling(token, body);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -44,10 +44,10 @@ export class BillingController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('/getAllOrdersToBilling')
   async getAllOrdersToBilling(
-    @Headers('authorization') authorization: string,
+    @Headers('token') token: string,
     @Query() params: string ) {
     try {
-      return await this.service.getAllOrdersToBilling(authorization, params);
+      return await this.service.getAllOrdersToBilling(token, params);
     } catch (error) {
       throw new Error(error.message);
     }

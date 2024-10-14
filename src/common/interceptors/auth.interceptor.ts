@@ -20,8 +20,7 @@ export class AuthInterceptor implements NestInterceptor {
         const secret = envs.secret_key;
         const options = { expiresIn: '2m' };
         const token = jwt.sign(payload, secret, options);
-        request.headers.authorization = token;
-        request.headers.authorization_core = authorization;
+        request.headers.token = token;
       } else {
         throw new Error('Invalid token format');
       }
