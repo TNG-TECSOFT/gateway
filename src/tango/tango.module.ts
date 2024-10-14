@@ -3,11 +3,15 @@ import { TangoController } from './tango.controller';
 import { TangoService } from './tango.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { envs } from '../config/envs';
-import { AuthService } from '../common/auth/auth.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthInterceptor } from '../common/interceptors/auth.interceptor';
 
 @Module({
   controllers: [TangoController],
-  providers: [TangoService, AuthService],
+  providers: [TangoService, {
+    provide: APP_INTERCEPTOR,
+    useClass: AuthInterceptor
+  }],
   imports:[
     ClientsModule.register([
       {

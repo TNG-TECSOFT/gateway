@@ -27,26 +27,29 @@ export class TangoService {
     }
   }
 
-  async getCustomerData(query: CustomerQueryDto) {
-    console.log('Query:', query);
+  async getCustomerData(query: CustomerQueryDto, authorization: string) {
+    query.token = authorization;
     return await firstValueFrom(
       this.client.send<CustomerData[], CustomerQueryDto>('getCustomerData', query)
     );
   }
 
-  async getProductData(query: ProductQueryDto) {
+  async getProductData(query: ProductQueryDto, authorization: string) {
+    query.token = authorization;
     return await firstValueFrom(
       this.client.send<ProductData[], ProductQueryDto>('getProductData', query)
     );
   }
 
-  async getOrderData(query: OrderQueryDto) {
+  async getOrderData(query: OrderQueryDto, authorization: string) {
+    query.token = authorization;
     return await firstValueFrom(
       this.client.send<OrderData[], OrderQueryDto>('getOrderData', query)
     );
   }
 
-  async createOrder(orderData: CreateOrderDto) {
+  async createOrder(orderData: CreateOrderDto, authorization: string) {
+    orderData.token = authorization;
     return await firstValueFrom(
       this.client.send('createOrder', orderData)
     );

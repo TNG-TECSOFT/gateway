@@ -3,17 +3,12 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { Permissions } from '../common/permissions/permissions';
 import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
 import { BillingService } from './billing.service';
-import { BillableOrdersRequestDto } from './dto/billable-orders-request.dto';
-import { AuthService } from '../common/auth/auth.service';
-import { AddOrderToBillingDto, AddOrderToBillingRequestDto } from './dto/add-order-to-send.dto';
-import { plainToClass, plainToInstance } from 'class-transformer';
-import { GetOrderToBillingDto, GetOrderToBillingParamsDto } from './dto/get-order-to-billing.dto';
+import { AddOrderToBillingDto } from './dto/add-order-to-send.dto';
 
 @Controller('billing')
 export class BillingController {
   constructor(
     private readonly service: BillingService,
-    private readonly authService: AuthService,
   ) {}
 
   @Permissions(ROLE_ADMIN, ROLE_GENERAL)
@@ -23,10 +18,7 @@ export class BillingController {
     @Headers('authorization') authorization: string,
     @Query() params: string ) {
     try {
-      const request = new BillableOrdersRequestDto();      
-      request.token = this.authService.getToken(authorization);
-      request.params = JSON.stringify(params);
-      return await this.service.getBillableOrders(request);
+      return await this.service.getBillableOrders(authorization, params);
     } catch (error) {
       throw new Error('Failed to retrieve billable orders');
     }
@@ -40,10 +32,7 @@ export class BillingController {
     @Headers('authorization') authorization: string,
     @Body() body: AddOrderToBillingDto ) {
     try {
-      const request = new AddOrderToBillingRequestDto();      
-      request.token = this.authService.getToken(authorization);
-      request.orderInfo = plainToClass(AddOrderToBillingDto, body);
-      return await this.service.addOrdersToBilling(request);
+      return await this.service.addOrdersToBilling(authorization, body);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -57,10 +46,7 @@ export class BillingController {
     @Headers('authorization') authorization: string,
     @Query() params: string ) {
     try {
-      const request = new GetOrderToBillingDto();      
-      request.token = this.authService.getToken(authorization);
-      request.params = plainToInstance(GetOrderToBillingParamsDto, params);
-      return await this.service.getAllOrdersToBilling(request);
+      return await this.service.getAllOrdersToBilling(authorization, params);
     } catch (error) {
       throw new Error(error.message);
     }
