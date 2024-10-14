@@ -6,6 +6,7 @@ import { BillableOrdersRequestDto } from './dto/billable-orders-request.dto';
 import { GetOrderToBillingDto, GetOrderToBillingParamsDto } from './dto/get-order-to-billing.dto';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { AddOrderToBillingDto, AddOrderToBillingRequestDto } from './dto/add-order-to-send.dto';
+import { DeleteOrderToBillingDto, DeleteOrderToBillingParamsDto } from './dto/delete-order-to-billing.dto';
 
 
 @Injectable()
@@ -42,4 +43,12 @@ export class BillingService {
       this.client.send<any, GetOrderToBillingDto>('getAllOrderToBilling', request)
     );
   }
+
+  async deleteOrderToBilling(authorization: string, id: number) {
+    const request = new DeleteOrderToBillingDto();      
+    request.token = authorization;
+    request.params = plainToInstance(DeleteOrderToBillingParamsDto, id);
+  return await firstValueFrom(
+    this.client.send<any, DeleteOrderToBillingDto>('deleteOrderToBilling', request)
+  );
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, UsePipes, ValidationPipe, Headers, Post, Body, } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, UsePipes, ValidationPipe, Headers, Post, Body, , Delete } from '@nestjs/common';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { Permissions } from '../common/permissions/permissions';
 import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
@@ -52,4 +52,18 @@ export class BillingController {
       throw new Error(error.message);
     }
   }
+
+  @Permissions(ROLE_ADMIN, ROLE_GENERAL)
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Delete('/deleteOrderToBilling')
+  async deleteOrderToBilling(
+    @Headers('authorization') authorization: string,
+    @Query('id') id: number) {
+    try {
+      return await this.service.deleteOrderToBilling(authorization, id);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  } 
 }
