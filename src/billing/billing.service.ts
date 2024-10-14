@@ -15,10 +15,11 @@ export class BillingService {
     private readonly client: ClientProxy,
   ) {}
 
-  async getBillableOrders(authorization: string, params: string) {
+  async getBillableOrders(authorization: string, params: string, authorization_core: string) {
     const request = new BillableOrdersRequestDto();      
       request.token = authorization;
       request.params = JSON.stringify(params);
+      request.authorization_core = authorization_core;
     return await firstValueFrom(
       this.client.send<any, BillableOrdersRequestDto>('getBillableOrders', request)
     );
