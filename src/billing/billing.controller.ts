@@ -47,7 +47,8 @@ export class BillingController {
     @Headers('token') token: string,
     @Query() params: string) {
     try {
-      return await this.service.getAllOrdersToBilling(token, params);
+      const response = await this.service.getAllOrdersToBilling(token, params);
+      return response
     } catch (error) {
       throw new Error(error.message);
     }

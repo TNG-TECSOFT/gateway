@@ -18,7 +18,7 @@ export class AuthInterceptor implements NestInterceptor {
         };
 
         const secret = envs.secret_key;
-        const options = { expiresIn: '2m' };
+        const options = { expiresIn: '2h' };
         const token = jwt.sign(payload, secret, options);
         request.headers.token = token;
       } else {
