@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsArray} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsArray, IsOptional} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class AddOrderToBillingDto {
@@ -6,10 +6,11 @@ class AddOrderToBillingDto {
     @IsNumber()
     shipperId: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsArray()
     @IsNumber({}, { each: true })
     ordersIds: number[];
+    
     
 }
 
@@ -17,6 +18,8 @@ class AddOrderToBillingRequestDto {
     
     token?: string;
     orderInfo: AddOrderToBillingDto;
+    params: string;
+    authorization_core: string;
 }
 
 export {AddOrderToBillingDto, AddOrderToBillingRequestDto}

@@ -26,10 +26,12 @@ export class BillingService {
     );
   }
 
-  async addOrdersToBilling(authorization: string, body: AddOrderToBillingDto) {
-    const request = new AddOrderToBillingRequestDto();
-    request.token = authorization;
-    request.orderInfo = plainToClass(AddOrderToBillingDto, body);
+  async addOrdersToBilling(authorization: string, body: AddOrderToBillingDto, params: string, authorization_core: string) {
+    const request = new AddOrderToBillingRequestDto();      
+      request.token = authorization;
+      request.orderInfo = plainToClass(AddOrderToBillingDto, body);
+      request.params = JSON.stringify(params);
+      request.authorization_core = authorization_core;
     return await firstValueFrom(
       this.client.send<any, AddOrderToBillingRequestDto>('addOrderToBilling', request)
     );

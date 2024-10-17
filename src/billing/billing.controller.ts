@@ -30,10 +30,12 @@ export class BillingController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('/addOrderToBilling')
   async addOrdersToBilling(
+    @Headers('authorization') authorization: string,
     @Headers('token') token: string,
-    @Body() body: AddOrderToBillingDto) {
+    @Body() body: AddOrderToBillingDto,
+    @Query() params: string ) {
     try {
-      return await this.service.addOrdersToBilling(token, body);
+      return await this.service.addOrdersToBilling(token, body, params, authorization);
     } catch (error) {
       throw new Error(error.message);
     }
