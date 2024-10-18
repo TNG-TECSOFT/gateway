@@ -1,11 +1,10 @@
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from 'rxjs';
 import { envs } from '../config/envs';
 import { BillableOrdersRequestDto } from './dto/billable-orders-request.dto';
 import { GetOrderToBillingDto, GetOrderToBillingParamsDto } from './dto/get-order-to-billing.dto';
-import { AddOrderToBillingDto, AddOrderToBillingRequestDto } from './dto/add-order-to-send.dto';
 import { DeleteOrderToBillingDto } from './dto/delete-order-to-billing.dto';
 
 
@@ -26,14 +25,13 @@ export class BillingService {
     );
   }
 
-  async addOrdersToBilling(authorization: string, body: AddOrderToBillingDto, params: string, authorization_core: string) {
-    const request = new AddOrderToBillingRequestDto();      
+  async addOrdersToBilling(authorization: string, params: string, authorization_core: string) {
+    const request = new BillableOrdersRequestDto();      
       request.token = authorization;
-      request.orderInfo = plainToClass(AddOrderToBillingDto, body);
-      request.params = JSON.stringify(params);
+      request.params = params;
       request.authorization_core = authorization_core;
     return await firstValueFrom(
-      this.client.send<any, AddOrderToBillingRequestDto>('addOrderToBilling', request)
+      this.client.send<any, BillableOrdersRequestDto>('addOrderToBilling', request)
     );
   }
 

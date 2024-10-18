@@ -3,7 +3,6 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { Permissions } from '../common/permissions/permissions';
 import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
 import { BillingService } from './billing.service';
-import { AddOrderToBillingDto } from './dto/add-order-to-send.dto';
 
 @Controller('billing')
 export class BillingController {
@@ -32,10 +31,9 @@ export class BillingController {
   async addOrdersToBilling(
     @Headers('authorization') authorization: string,
     @Headers('token') token: string,
-    @Body() body: AddOrderToBillingDto,
-    @Query() params: string ) {
+    @Body() params: string) {
     try {
-      return await this.service.addOrdersToBilling(token, body, params, authorization);
+      return await this.service.addOrdersToBilling(token, params, authorization);
     } catch (error) {
       throw new Error(error.message);
     }
