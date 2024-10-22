@@ -38,7 +38,6 @@ export class BillingService {
       request.token = authorization;
       request.params = JSON.stringify(params);
       request.authorization_core = authorization_core;
-      console.log('Gateway - Service')
       return await firstValueFrom(
         this.client.send<any, BillableOrdersRequestDto>('addOrderToBilling', request)
       );

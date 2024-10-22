@@ -37,7 +37,6 @@ export class BillingController {
     @Headers('token') token: string,
     @Body() params: string) {
     try {
-      console.log('Gateway - Controller')
       return await this.service.addOrdersToBilling(token, params, authorization);
     } catch (error) {
       if (error instanceof HttpException) {
