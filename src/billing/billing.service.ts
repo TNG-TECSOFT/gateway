@@ -6,7 +6,7 @@ import { envs } from '../config/envs';
 import { BillableOrdersRequestDto } from './dto/billable-orders-request.dto';
 import { GetOrderToBillingDto, GetOrderToBillingParamsDto } from './dto/get-order-to-billing.dto';
 import { DeleteOrderToBillingDto } from './dto/delete-order-to-billing.dto';
-
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class BillingService {
@@ -16,32 +16,54 @@ export class BillingService {
   ) { }
 
   async getBillableOrders(authorization: string, params: string, authorization_core: string) {
-    const request = new BillableOrdersRequestDto();
-    request.token = authorization;
-    request.params = JSON.stringify(params);
-    request.authorization_core = authorization_core;
-    return await firstValueFrom(
-      this.client.send<any, BillableOrdersRequestDto>('getBillableOrders', request)
-    );
-  }
-
-  async addOrdersToBilling(authorization: string, params: string, authorization_core: string) {
-    const request = new BillableOrdersRequestDto();      
+    try {
+      const request = new BillableOrdersRequestDto();
       request.token = authorization;
       request.params = JSON.stringify(params);
       request.authorization_core = authorization_core;
-    return await firstValueFrom(
-      this.client.send<any, BillableOrdersRequestDto>('addOrderToBilling', request)
-    );
+      return await firstValueFrom(
+        this.client.send<any, BillableOrdersRequestDto>('getBillableOrders', request)
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Falló la comunicación con el microservicio', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async addOrdersToBilling(authorization: string, params: string, authorization_core: string) {
+    try {
+      const request = new BillableOrdersRequestDto();      
+      request.token = authorization;
+      request.params = JSON.stringify(params);
+      request.authorization_core = authorization_core;
+      console.log('Gateway - Service')
+      return await firstValueFrom(
+        this.client.send<any, BillableOrdersRequestDto>('addOrderToBilling', request)
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Falló la comunicación con el microservicio', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async getAllOrdersToBilling(authorization: string, params: string) {
-    const request = new GetOrderToBillingDto();
-    request.token = authorization;
-    request.params = plainToInstance(GetOrderToBillingParamsDto, params);
-    return await firstValueFrom(
-      this.client.send<any, GetOrderToBillingDto>('getAllOrderToBilling', request)
-    );
+    try {
+      const request = new GetOrderToBillingDto();
+      request.token = authorization;
+      request.params = plainToInstance(GetOrderToBillingParamsDto, params);
+      return await firstValueFrom(
+        this.client.send<any, GetOrderToBillingDto>('getAllOrderToBilling', request)
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Falló la comunicación con el microservicio', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async deleteOrderToBilling(authorization: string, id: number) {
@@ -54,10 +76,10 @@ export class BillingService {
       );
       return response
     } catch (error) {
-      if (error instanceof RpcException || error instanceof Error) {
-        throw new InternalServerErrorException(error.message);
+      if (error instanceof HttpException) {
+        throw error;
       }
-      throw new InternalServerErrorException('An unexpected error occurred.');
+      throw new HttpException('Falló la comunicación con el microservicio', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

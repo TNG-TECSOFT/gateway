@@ -3,6 +3,7 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { Permissions } from '../common/permissions/permissions';
 import { ROLE_ADMIN, ROLE_GENERAL } from '../common/constants/roles';
 import { BillingService } from './billing.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Controller('billing')
 export class BillingController {
@@ -20,7 +21,10 @@ export class BillingController {
     try {
       return await this.service.getBillableOrders(token, params, authorization);
     } catch (error) {
-      throw new Error('Failed to retrieve billable orders');
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error al recuperar órdenes', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -33,9 +37,13 @@ export class BillingController {
     @Headers('token') token: string,
     @Body() params: string) {
     try {
+      console.log('Gateway - Controller')
       return await this.service.addOrdersToBilling(token, params, authorization);
     } catch (error) {
-      throw new Error(error.message);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error al agregar órdenes', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -50,7 +58,10 @@ export class BillingController {
       const response = await this.service.getAllOrdersToBilling(token, params);
       return response
     } catch (error) {
-      throw new Error(error.message);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error al recuperar órdenes', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -66,10 +77,10 @@ export class BillingController {
       const result = await this.service.deleteOrderToBilling(authorization, id);
       return result
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
+      if (error instanceof HttpException) {
+        throw error;
       }
-      throw new InternalServerErrorException(error.message);
+      throw new HttpException('Error al eliminar una orden', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
